@@ -41,7 +41,7 @@ app.add_middleware(
 )
 
 # serve uploaded PDFs
-app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
+app.mount("/files", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
 # ── storage helpers ───────────────────────────────────────────────────────────
 def _load() -> dict:

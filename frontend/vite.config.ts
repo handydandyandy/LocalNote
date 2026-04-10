@@ -39,7 +39,7 @@ export default defineConfig({
         navigateFallback: 'index.html',
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.pathname.startsWith('/assets/'),
+            urlPattern: ({ url }) => url.pathname.startsWith('/files/'),
             handler: 'CacheFirst',
             options: {
               cacheName: 'pdf-assets',

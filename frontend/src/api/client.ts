@@ -100,7 +100,7 @@ export const api = {
     return res.json() as Promise<{ file_id: string; url: string }>
   },
 
-  getPdfUrl: (fileId: string) => `${getBackendUrl()}/assets/${fileId}.pdf`,
+  getPdfUrl: (fileId: string) => `${getBackendUrl()}/files/${fileId}.pdf`,
 
   // ── sync ──────────────────────────────────────────────────────────────────
   sync: (
