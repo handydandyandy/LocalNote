@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1e1e2e"/>
+  <!-- notebook body -->
+  <rect x="120" y="80" width="272" height="352" rx="16" fill="#6b8fff"/>
+  <!-- spine -->
+  <rect x="120" y="80" width="40" height="352" rx="8" fill="#4a6fe8"/>
+  <!-- rings -->
+  <circle cx="140" cy="176" r="14" fill="#1e1e2e"/>
+  <circle cx="140" cy="256" r="14" fill="#1e1e2e"/>
+  <circle cx="140" cy="336" r="14" fill="#1e1e2e"/>
+  <!-- lines -->
+  <rect x="184" y="168" width="180" height="12" rx="6" fill="rgba(255,255,255,0.7)"/>
+  <rect x="184" y="204" width="140" height="12" rx="6" fill="rgba(255,255,255,0.5)"/>
+  <rect x="184" y="240" width="160" height="12" rx="6" fill="rgba(255,255,255,0.5)"/>
+  <rect x="184" y="276" width="120" height="12" rx="6" fill="rgba(255,255,255,0.5)"/>
+  <!-- pen -->
+  <rect x="330" y="290" width="24" height="100" rx="6" fill="#ffcc55" transform="rotate(-35 342 340)"/>
+  <polygon points="310,400 334,378 322,410" fill="#e0a020"/>
+</svg>

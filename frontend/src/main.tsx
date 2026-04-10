@@ -8,12 +8,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <App />
   </React.StrictMode>
 )
-
-// Register service worker (injected by vite-plugin-pwa)
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .catch(() => { /* SW not available in dev */ })
-  })
-}
+// Service worker is registered automatically by vite-plugin-pwa (registerType: 'autoUpdate')

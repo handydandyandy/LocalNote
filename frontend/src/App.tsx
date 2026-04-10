@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { AppProvider, useApp } from './context/AppContext'
 import { Sidebar } from './components/Sidebar'
 import { Settings } from './components/Settings'
 import { Canvas } from './components/Canvas'
+import type { CanvasHandle } from './types'
+import { api } from './api/client'
+import { useSync } from './hooks/useSync'
 
 // ── top bar ───────────────────────────────────────────────────────────────────
 function TopBar({ canvasSlot }: { canvasSlot?: React.ReactNode }) {
@@ -17,7 +20,26 @@ function TopBar({ canvasSlot }: { canvasSlot?: React.ReactNode }) {
     selectedPage,
     syncStatus,
     lastSyncTime,
+    loadNotebooks,
   } = useApp()
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !selectedPage) return
+    setUploading(true)
+    try {
+      await api.uploadPdf(selectedPage.id, file)
+      await loadNotebooks()
+    } catch (err) {
+      console.error('PDF upload failed:', err)
+    } finally {
+      setUploading(false)
+      e.target.value = ''
+    }
+  }
 
   const syncLabel =
     syncStatus === 'syncing' ? '⟳ Syncing…'
@@ -42,10 +64,29 @@ function TopBar({ canvasSlot }: { canvasSlot?: React.ReactNode }) {
         {selectedPage     && <><span className="crumb-sep">/</span><span className="crumb active">{selectedPage.name}</span></>}
       </nav>
 
-      {/* canvas-injected tools sit here (Stage 3) */}
       <div className="topbar-tools">{canvasSlot}</div>
 
       <div className="topbar-right">
+        {selectedPage && (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf"
+              style={{ display: 'none' }}
+              onChange={handlePdfUpload}
+            />
+            <button
+              className="icon-btn topbar-btn"
+              onClick={() => fileInputRef.current?.click()}
+              title={selectedPage.pdf_id ? 'Replace PDF background' : 'Attach PDF background'}
+              aria-label="Upload PDF"
+              disabled={uploading}
+            >
+              {uploading ? '⟳' : selectedPage.pdf_id ? '📄✓' : '📄'}
+            </button>
+          </>
+        )}
         {syncLabel && <span className={`sync-badge ${syncStatus}`}>{syncLabel}</span>}
         <button
           className="icon-btn topbar-btn"
@@ -85,18 +126,38 @@ function EmptyState() {
 
 // ── main shell ────────────────────────────────────────────────────────────────
 function Shell() {
-  const { settingsOpen, selectedPage, canvasRef } = useApp()
+  const { settingsOpen, selectedPage, canvasRef, syncStatus } = useApp()
+  const { runSync } = useSync()
+
+  const syncBtn = selectedPage ? (
+    <button
+      className="icon-btn topbar-btn"
+      onClick={runSync}
+      title="Sync now"
+      aria-label="Sync now"
+      disabled={syncStatus === 'syncing'}
+    >
+      ⟳
+    </button>
+  ) : null
 
   return (
     <div className="app-layout">
       <Sidebar />
 
       <div className="main-area">
-        <TopBar />
+        <TopBar canvasSlot={syncBtn} />
 
         <div className="canvas-area" id="canvas-root">
           {selectedPage
-            ? <Canvas key={selectedPage.id} ref={canvasRef} pageId={selectedPage.id} />
+            ? (
+              <Canvas
+                key={selectedPage.id}
+                ref={canvasRef as React.RefObject<CanvasHandle>}
+                pageId={selectedPage.id}
+                pdfId={selectedPage.pdf_id}
+              />
+            )
             : <EmptyState />
           }
         </div>
